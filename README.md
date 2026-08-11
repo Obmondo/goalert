@@ -11,6 +11,14 @@ Additionally, images are published on [Docker Hub](https://hub.docker.com/r/goal
 
 See our [Getting Started Guide](./docs/getting-started.md) for running GoAlert in a production environment.
 
+### Building the Docker Image Locally
+
+To build the GoAlert container image locally from the repository root:
+
+```bash
+docker build -t goalert:latest -f devtools/ci/dockerfiles/goalert/Dockerfile .
+```
+
 ### Quick Start
 
 ```bash
@@ -41,11 +49,11 @@ For most purposes, you can use `make start` from the root of this repo to start 
 
 If you need help or have a question, the `#goalert` Slack channel is available on [gophers.slack.com](https://gophers.slack.com/messages/goalert/).
 
-To access Gophers Slack and the `#goalert` channel, you will need an invitation. You request one through the automated process here: https://invite.slack.golangbridge.org/
+To access Gophers Slack and the `#goalert` channel, you will need an invitation. You request one through the automated process here: <https://invite.slack.golangbridge.org/>
 
 - Vote on existing [Feature Requests](https://github.com/target/goalert/issues?q=is%3Aopen+label%3Aenhancement+sort%3Areactions-%2B1-desc) or submit [a new one](https://github.com/target/goalert/issues/new)
 - File a [bug report](https://github.com/target/goalert/issues)
-- Report security issues to security@goalert.me
+- Report security issues to <security@goalert.me>
 
 ## License
 
