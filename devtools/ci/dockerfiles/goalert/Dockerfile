@@ -1,5 +1,8 @@
 FROM docker.io/goalert/build-env:go1.26.3 AS build
+USER root
 COPY / /build/
+RUN chown -R user:user /build
+USER user
 WORKDIR /build
 RUN make clean bin/build/goalert-linux-amd64
 
