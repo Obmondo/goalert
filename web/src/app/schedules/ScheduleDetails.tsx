@@ -19,6 +19,7 @@ import { TempSchedValue, defaultTempSchedValue } from './temp-sched/sharedUtils'
 import { Redirect } from 'wouter'
 import { useScheduleTZ } from './useScheduleTZ'
 import { useURLParam } from '../actions'
+import { useSessionInfo } from '../util/RequireConfig'
 
 const query = gql`
   fragment ScheduleTitleQuery on Schedule {
@@ -75,6 +76,7 @@ export default function ScheduleDetails({
     : ''
   const [showEdit, setShowEdit] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
+  const { isAdmin } = useSessionInfo()
 
   const isMobile = useIsWidthDown('md')
 
@@ -180,16 +182,20 @@ export default function ScheduleDetails({
           />,
         ]}
         secondaryActions={[
-          {
-            label: 'Edit',
-            icon: <Edit />,
-            handleOnClick: () => setShowEdit(true),
-          },
-          {
-            label: 'Delete',
-            icon: <Delete />,
-            handleOnClick: () => setShowDelete(true),
-          },
+          ...(isAdmin
+            ? [
+                {
+                  label: 'Edit',
+                  icon: <Edit />,
+                  handleOnClick: () => setShowEdit(true),
+                },
+                {
+                  label: 'Delete',
+                  icon: <Delete />,
+                  handleOnClick: () => setShowDelete(true),
+                },
+              ]
+            : []),
           <QuerySetFavoriteButton
             key='secondary-action-favorite'
             id={scheduleID}

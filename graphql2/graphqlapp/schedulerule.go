@@ -30,6 +30,10 @@ func (r *ScheduleRule) WeekdayFilter(ctx context.Context, raw *rule.Rule) ([]boo
 }
 
 func (m *Mutation) UpdateScheduleTarget(ctx context.Context, input graphql2.ScheduleTargetInput) (bool, error) {
+	err := permission.LimitCheckAny(ctx, permission.Admin)
+	if err != nil {
+		return false, err
+	}
 	var schedID string
 	if input.ScheduleID != nil {
 		schedID = *input.ScheduleID
@@ -37,7 +41,7 @@ func (m *Mutation) UpdateScheduleTarget(ctx context.Context, input graphql2.Sche
 	if input.Target.Type == assignment.TargetTypeUser && input.Target.ID == "__current_user" {
 		input.Target.ID = permission.UserID(ctx)
 	}
-	err := withContextTx(ctx, m.DB, func(ctx context.Context, tx *sql.Tx) error {
+	err = withContextTx(ctx, m.DB, func(ctx context.Context, tx *sql.Tx) error {
 		_, err := m.ScheduleStore.FindOneForUpdate(ctx, tx, schedID) // lock schedule
 		if errors.Is(err, sql.ErrNoRows) {
 			return validation.NewFieldError("scheduleID", "schedule not found")

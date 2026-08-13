@@ -5,6 +5,7 @@ import { DateTime } from 'luxon'
 import ScheduleOverrideForm from './ScheduleOverrideForm'
 import { fieldErrors, nonFieldErrors } from '../util/errutil'
 import useOverrideNotices from './useOverrideNotices'
+import { useSessionInfo } from '../util/RequireConfig'
 
 interface ScheduleOverrideCreateDialogProps {
   scheduleID: string
@@ -62,8 +63,9 @@ export default function ScheduleOverrideCreateDialog({
   onClose,
   removeUserReadOnly,
 }: ScheduleOverrideCreateDialogProps): JSX.Element {
+  const { userID: currentUserID, isAdmin } = useSessionInfo()
   const [value, setValue] = useState({
-    addUserID: '',
+    addUserID: isAdmin ? '' : currentUserID,
     removeUserID: '',
     start: DateTime.local().startOf('hour').toISO(),
     end: DateTime.local().startOf('hour').plus({ hours: 8 }).toISO(),
@@ -103,6 +105,7 @@ export default function ScheduleOverrideCreateDialog({
           value={value}
           onChange={(newValue) => setValue(newValue)}
           removeUserReadOnly={removeUserReadOnly}
+          addUserReadOnly={!isAdmin}
         />
       }
     />

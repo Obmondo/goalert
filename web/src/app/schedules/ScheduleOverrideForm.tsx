@@ -47,6 +47,7 @@ interface ScheduleOverrideFormProps {
   errors: Array<FieldError>
   onChange: (value: ScheduleOverrideFormValue) => void
   removeUserReadOnly?: boolean
+  addUserReadOnly?: boolean
 }
 
 export default function ScheduleOverrideForm(
@@ -59,6 +60,7 @@ export default function ScheduleOverrideForm(
     scheduleID,
     value,
     removeUserReadOnly,
+    addUserReadOnly,
     ...formProps
   } = props
 
@@ -119,6 +121,7 @@ export default function ScheduleOverrideForm(
               required
               name='addUserID'
               label='User to Add'
+              disabled={addUserReadOnly}
             />
           </Grid>
         )}
