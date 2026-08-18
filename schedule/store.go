@@ -120,7 +120,7 @@ func (store *Store) CreateScheduleTx(ctx context.Context, tx *sql.Tx, s *Schedul
 		return nil, err
 	}
 
-	err = permission.LimitCheckAny(ctx, permission.Admin, permission.User)
+	err = permission.LimitCheckAny(ctx, permission.Admin)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +154,7 @@ func (store *Store) Update(ctx context.Context, s *Schedule) error {
 		return err
 	}
 
-	err = permission.LimitCheckAny(ctx, permission.Admin, permission.User)
+	err = permission.LimitCheckAny(ctx, permission.Admin)
 	if err != nil {
 		return err
 	}

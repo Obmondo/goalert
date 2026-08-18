@@ -197,6 +197,10 @@ func (s *Schedule) AssignedTo(ctx context.Context, raw *schedule.Schedule) ([]as
 }
 
 func (m *Mutation) UpdateSchedule(ctx context.Context, input graphql2.UpdateScheduleInput) (ok bool, err error) {
+	err = permission.LimitCheckAny(ctx, permission.Admin)
+	if err != nil {
+		return false, err
+	}
 	var loc *time.Location
 	if input.TimeZone != nil {
 		loc, err = util.LoadLocation(*input.TimeZone)
@@ -230,6 +234,10 @@ func (m *Mutation) UpdateSchedule(ctx context.Context, input graphql2.UpdateSche
 }
 
 func (m *Mutation) CreateSchedule(ctx context.Context, input graphql2.CreateScheduleInput) (sched *schedule.Schedule, err error) {
+	err = permission.LimitCheckAny(ctx, permission.Admin)
+	if err != nil {
+		return nil, err
+	}
 	usedTargets := make(map[assignment.RawTarget]int, len(input.Targets))
 
 	for i, tgt := range input.Targets {

@@ -12,6 +12,7 @@ import Spinner from '../loading/components/Spinner'
 import { ObjectNotFound, GenericError } from '../error-pages'
 import { RotationAvatar } from '../util/avatars'
 import { HandoffSummary } from './HandoffSummary'
+import { useSessionInfo } from '../util/RequireConfig'
 
 const query = gql`
   fragment RotationTitleQuery on Rotation {
@@ -39,6 +40,7 @@ export default function RotationDetails(props: {
 }): React.JSX.Element {
   const [showEdit, setShowEdit] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
+  const { isAdmin } = useSessionInfo()
 
   const [{ data: _data, fetching, error }] = useQuery({
     query,
@@ -80,16 +82,20 @@ export default function RotationDetails(props: {
         details={data.description}
         pageContent={<RotationUserList rotationID={props.rotationID} />}
         secondaryActions={[
-          {
-            label: 'Edit',
-            icon: <Edit />,
-            handleOnClick: () => setShowEdit(true),
-          },
-          {
-            label: 'Delete',
-            icon: <Delete />,
-            handleOnClick: () => setShowDelete(true),
-          },
+          ...(isAdmin
+            ? [
+                {
+                  label: 'Edit',
+                  icon: <Edit />,
+                  handleOnClick: () => setShowEdit(true),
+                },
+                {
+                  label: 'Delete',
+                  icon: <Delete />,
+                  handleOnClick: () => setShowDelete(true),
+                },
+              ]
+            : []),
           <QuerySetFavoriteButton
             key='secondary-action-favorite'
             id={props.rotationID}

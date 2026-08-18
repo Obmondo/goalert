@@ -7,6 +7,7 @@ import (
 	"github.com/target/goalert/assignment"
 	"github.com/target/goalert/graphql2"
 	"github.com/target/goalert/override"
+	"github.com/target/goalert/permission"
 	"github.com/target/goalert/search"
 	"github.com/target/goalert/user"
 	"github.com/target/goalert/validation"
@@ -29,6 +30,10 @@ func (m *Mutation) UpdateUserOverride(ctx context.Context, input graphql2.Update
 			return validation.NewFieldError("ID", "user override not found")
 		}
 
+		if !permission.Admin(ctx) && u.AddUserID != permission.UserID(ctx) {
+			return validation.NewFieldError("AddUserID", "unauthorized to modify this override")
+		}
+
 		if input.Start != nil {
 			u.Start = *input.Start
 		}
@@ -36,6 +41,9 @@ func (m *Mutation) UpdateUserOverride(ctx context.Context, input graphql2.Update
 			u.End = *input.End
 		}
 		if input.AddUserID != nil {
+			if !permission.Admin(ctx) && *input.AddUserID != permission.UserID(ctx) {
+				return validation.NewFieldError("AddUserID", "non-admin users can only update overrides to add themselves")
+			}
 			u.AddUserID = *input.AddUserID
 		}
 		if input.RemoveUserID != nil {
@@ -64,6 +72,9 @@ func (m *Mutation) CreateUserOverride(ctx context.Context, input graphql2.Create
 	}
 	if input.RemoveUserID != nil {
 		u.RemoveUserID = *input.RemoveUserID
+	}
+	if !permission.Admin(ctx) && u.AddUserID != permission.UserID(ctx) {
+		return nil, validation.NewFieldError("AddUserID", "non-admin users can only create overrides to add themselves")
 	}
 	err := withContextTx(ctx, m.DB, func(ctx context.Context, tx *sql.Tx) error {
 		var err error

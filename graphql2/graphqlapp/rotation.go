@@ -30,6 +30,10 @@ func (q *Query) Rotation(ctx context.Context, id string) (*rotation.Rotation, er
 }
 
 func (m *Mutation) CreateRotation(ctx context.Context, input graphql2.CreateRotationInput) (result *rotation.Rotation, err error) {
+	err = permission.LimitCheckAny(ctx, permission.Admin)
+	if err != nil {
+		return nil, err
+	}
 	loc, err := util.LoadLocation(input.TimeZone)
 	if err != nil {
 		return nil, validation.NewFieldError("TimeZone", err.Error())
@@ -321,6 +325,10 @@ func (m *Mutation) updateRotationParticipants(ctx context.Context, tx *sql.Tx, r
 }
 
 func (m *Mutation) UpdateRotation(ctx context.Context, input graphql2.UpdateRotationInput) (res bool, err error) {
+	err = permission.LimitCheckAny(ctx, permission.Admin)
+	if err != nil {
+		return false, err
+	}
 	err = withContextTx(ctx, m.DB, func(ctx context.Context, tx *sql.Tx) error {
 		result, err := m.RotationStore.FindRotationForUpdateTx(ctx, tx, input.ID)
 		if errors.Is(err, sql.ErrNoRows) {
